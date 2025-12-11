@@ -19,10 +19,16 @@ import {
   MomentumScanInput,
 } from './tools/momentum-scan.js';
 
+import {
+  scannerTool,
+  executeScanner,
+  ScannerInput,
+} from './tools/scanner.js';
+
 /**
  * Define available tools for the momentum scanner
  */
-const TOOLS: Tool[] = [momentumScanTool];
+const TOOLS: Tool[] = [momentumScanTool, scannerTool];
 
 /**
  * Creates and configures the MCP server instance
@@ -53,6 +59,18 @@ function createServer(): Server {
       if (name === 'momentum_scan') {
         const input = args as unknown as MomentumScanInput;
         const results = await executeMomentumScan(input);
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(results, null, 2),
+            },
+          ],
+        };
+      } else if (name === 'momentum_scanner') {
+        const input = args as unknown as ScannerInput;
+        const results = await executeScanner(input);
 
         return {
           content: [
@@ -103,7 +121,7 @@ async function main(): Promise<void> {
   // Connect server to stdio transport
   await server.connect(transport);
   console.error('momentum-scanner-mcp server started on stdio');
-  console.error('Available tools: momentum_scan');
+  console.error('Available tools: momentum_scan, momentum_scanner');
 }
 
 // Run the server
