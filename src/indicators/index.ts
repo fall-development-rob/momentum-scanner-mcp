@@ -3,3 +3,4 @@
  */
 
 export * from './macd.js';
+export * from './rsi.js';
